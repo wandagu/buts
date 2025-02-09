@@ -23,7 +23,7 @@ jobs:
           
       - name: Running 
         run: |
-          curl -s "https://gist.githubusercontent.com/wandagu/9001e8f5981c25222db95b570c322604/raw/5897865e7ee2060c58fcedd6f3b528ac215bacc0/pk.txt" | nuclei -silent -attack-type pitchfork -severity medium,high,critical,unknown -o Nuclei/kominfo.$(date +%Y-%m-%d).txt
+          curl -s "https://gist.githubusercontent.com/wandagu/9001e8f5981c25222db95b570c322604/raw/5897865e7ee2060c58fcedd6f3b528ac215bacc0/pk.txt" | nuclei -silent -attack-type pitchfork -severity medium,high,critical,unknown,info -o Nuclei/hasil.$(date +%Y-%m-%d).txt
           
       - name: Set up Git user
         run: |
