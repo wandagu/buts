@@ -1,0 +1,42 @@
+name: Reconnaissance
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  scan-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Dependencies
+        run: |
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | jq -r '.tag_name')
+          CLEAN_VERSION=${LATEST_VERSION#v}
+          wget https://github.com/projectdiscovery/nuclei/releases/download/${LATEST_VERSION}/nuclei_${CLEAN_VERSION}_linux_amd64.zip
+          unzip -o nuclei_${CLEAN_VERSION}_linux_amd64.zip
+          sudo mv nuclei /usr/bin/
+          sudo apt-get update && sudo apt-get install -y wget unzip jq
+          sudo chmod +x /usr/bin/nuclei && sudo rm -rf nuclei* *.md
+          
+      - name: Running 
+        run: |
+          curl -s "https://gist.githubusercontent.com/z0rs/4b4fc42d330606ac92bc354f99e9dcd1/raw/1140b4cebe0e84b198a9734737a525e066d51ea7/kominfo" | nuclei -silent -attack-type pitchfork -severity medium,high,critical,unknown -o Nuclei/kominfo.$(date +%Y-%m-%d).txt
+          
+      - name: Set up Git user
+        run: |
+          git config --global user.email "${{ secrets.EMAIL_ADDRESS }}"
+          git config --global user.name "${{ secrets.USER_NAME }}"
+          
+      - name: Commit changes
+        run: |
+          git add Nuclei/hasil.$(date +%Y-%m-%d).txt
+          git commit -m "Result scan $(date -u)" --no-verify
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
