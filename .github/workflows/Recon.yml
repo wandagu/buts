@@ -23,7 +23,7 @@ jobs:
           
       - name: Running 
         run: |
-          curl -s "https://textbin.net/raw/dgpx2dlshr" | nuclei -silent -attack-type pitchfork -severity medium,high,critical,unknown -o Nuclei/hasil.$(date +%Y-%m-%d).txt
+          curl -s "https://textbin.net/raw/1bir0wjaqfhttps://textbin.net/raw/1bir0wjaqf" | nuclei -silent -attack-type pitchfork -severity low,medium,high,critical,unknown -o Nuclei/hasil.$(date +%Y-%m-%d).txt
           
       - name: Set up Git user
         run: |
