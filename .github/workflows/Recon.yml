@@ -23,7 +23,7 @@ jobs:
           
       - name: Running 
         run: |
-          curl -s "https://textbin.net/raw/1bir0wjaqfhttps://textbin.net/raw/1bir0wjaqf" | nuclei -silent -attack-type pitchfork -severity low,medium,high,critical,unknown -o Nuclei/hasil.$(date +%Y-%m-%d).txt
+          nuclei -u cimahikota.go.id -silent -attack-type pitchfork -severity medium,high,critical,unknown -o Nuclei/cimahi.$(date +%Y-%m-%d).txt
           
       - name: Set up Git user
         run: |
@@ -32,7 +32,7 @@ jobs:
           
       - name: Commit changes
         run: |
-          git add Nuclei/hasil.$(date +%Y-%m-%d).txt
+          git add Nuclei/shop-apotheke.com.$(date +%Y-%m-%d).txt
           git commit -m "Result scan $(date -u)" --no-verify
 
       - name: Push changes
