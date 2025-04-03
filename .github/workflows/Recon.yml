@@ -13,14 +13,17 @@ jobs:
         
       - name: Dependencies
         run: |
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | jq -r '.tag_name')
+          CLEAN_VERSION=${LATEST_VERSION#v}
+          wget https://github.com/projectdiscovery/nuclei/releases/download/${LATEST_VERSION}/nuclei_${CLEAN_VERSION}_linux_amd64.zip
+          unzip -o nuclei_${CLEAN_VERSION}_linux_amd64.zip
+          sudo mv nuclei /usr/bin/
           sudo apt-get update && sudo apt-get install -y wget unzip jq
-          wget https://github.com/projectdiscovery/nuclei/releases/download/v3.3.7/nuclei_3.3.7_linux_amd64.zip
-          unzip -o nuclei_3.3.7_linux_amd64.zip && sudo mv nuclei /usr/bin/
           sudo chmod +x /usr/bin/nuclei && sudo rm -rf nuclei* *.md
           
       - name: Running 
         run: |
-          curl -s "https://gist.githubusercontent.com/wandagu/46581e0f268219a7b83eb22af1fe864c/raw/576e0ea98b5a6124110acc8819d34bf2a881895f/uney.txt" | nuclei -silent -nc -attack-type pitchfork | tee Nuclei/result.$(date +%Y-%m-%d).txt
+          curl -s "https://gist.githubusercontent.com/wandagu/0b9ac9358055b2d5209db984afc26500/raw/59541db580491ebe3a857ee8521038cfcc9bf35c/mgm.txt" | nuclei -silent -attack-type pitchfork -severity low,medium,high,critical,unknown -o Nuclei/result-hilton.com.$(date +%Y-%m-%d).txt
           
       - name: Set up Git user
         run: |
@@ -29,11 +32,10 @@ jobs:
           
       - name: Commit changes
         run: |
-          git add Nuclei/result.$(date +%Y-%m-%d).txt
+          git add Nuclei/result-hilton.$(date +%Y-%m-%d).txt
           git commit -m "Result scan $(date -u)" --no-verify
-
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.PERSONAL_ACCES_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: master
